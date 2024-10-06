@@ -1,0 +1,18 @@
+{
+	"name": "pf2e-automaton",
+	"scripts": {
+		"build": "esbuild src/index.ts --bundle --keep-names --minify --sourcemap --outdir=scripts",
+		"dev": "esbuild src/index.ts --bundle --keep-names --watch --sourcemap --outdir=scripts"
+	},
+	"author": "7H3LaughingMan",
+	"license": "MIT",
+	"devDependencies": {
+		"esbuild": "^0.24.0",
+		"keep-a-changelog": "^2.5.3",
+		"typescript": "^5.6.2"
+	},
+	"dependencies": {
+		"@typed-foundry/socketlib": "^1.0.12",
+		"foundry-pf2e": "github:reonZ/foundry-pf2e"
+	}
+}
