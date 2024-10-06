@@ -1,12 +1,12 @@
 import { MODULE, RollNotePF2e } from "foundry-pf2e";
-import { Utils } from "./utils";
+import { Utils } from "../utils";
 
-export function onceSocketLibReady() {
+Hooks.once("socketlib.ready", function () {
     window.pf2eAutomaton.socket = socketlib.registerModule(MODULE.id);
     window.pf2eAutomaton.socket.register("Actor.increaseCondition", Actor.increaseActorCondition);
     window.pf2eAutomaton.socket.register("Actor.decreaseCondition", Actor.decreaseActorCondition);
     window.pf2eAutomaton.socket.register("Actor.rollSave", Actor.rollSave);
-}
+});
 
 namespace Actor {
     export async function rollSave(actorId: string, save: SaveType, args?: Types.StatisticRollParameters) {
