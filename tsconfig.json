@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "ESNext",
         "module": "NodeNext",
-        "moduleResolution": "nodenext",
+        "moduleResolution": "NodeNext",
         "isolatedModules": true,
         "esModuleInterop": true,
         "experimentalDecorators": true,
@@ -21,7 +21,7 @@
         ],
         "types": [
             "foundry-pf2e",
-            "@typed-foundry/socketlib"
+            "@typed-foundry/socketlib",
         ],
         "rootDir": "src",
         "outDir": "scripts"

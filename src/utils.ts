@@ -1,32 +1,7 @@
 export namespace Utils {
-    export namespace ChatMessage {
-        export function simplePredicate(message: ChatMessagePF2e, ...options: string[]): boolean {
-            let rollOptions = message.flags.pf2e.context?.options ?? [];
-            return options.every((option) => rollOptions.includes(option));
-        }
-    }
-
     export namespace Actor {
         export async function addEffect(actor: ActorPF2e, effect: PreCreate<EffectSource>): Promise<ItemPF2e[]> {
             return actor.createEmbeddedDocuments("Item", [effect]);
-        }
-
-        export async function decreaseCondition(actor: ActorPF2e, conditionSlug: string, options?: { forceRemove: boolean; }) {
-            if (!actor.canUserModify(game.user, "update")) {
-                window.pf2eAutomaton.socket.executeAsGM("Actor.decreaseCondition", actor.id, conditionSlug, options);
-                return;
-            }
-    
-            await actor.decreaseCondition(conditionSlug, options);
-        }
-    
-        export async function increaseCondition(actor: ActorPF2e, conditionSlug: string, options?: { max?: number; value?: number | null; }) {
-            if (!actor.canUserModify(game.user, "update")) {
-                window.pf2eAutomaton.socket.executeAsGM("Actor.increaseCondition", actor.id, conditionSlug, options);
-                return;
-            }
-    
-            await actor.increaseCondition(conditionSlug, options);
         }
 
         export function getClassDC(actor: ActorPF2e): CheckDC | number | undefined  {
@@ -45,7 +20,7 @@ export namespace Utils {
             }
         }
 
-        export async function rollSave(actor: ActorPF2e, save: SaveType, args?: StatisticRollParameters) {
+        /*export async function rollSave(actor: ActorPF2e, save: SaveType, args?: StatisticRollParameters) {
             if (!actor.canUserModify(game.user, "update")) {
                 window.pf2eAutomaton.socket.executeAsGM("Actor.rollSave", actor.id, save, (!args ? undefined : {
                     identifier: args.identifier,
@@ -73,7 +48,7 @@ export namespace Utils {
             }
 
             await actor.saves?.[save]?.roll(args);
-        }
+        }*/
     }
 
     export namespace Effect {

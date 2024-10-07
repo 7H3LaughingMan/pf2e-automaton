@@ -1,4 +1,7 @@
 import { MODULE } from "foundry-pf2e";
+import { AutomatonMessage, AutomatonSocket, AutomatonStorage } from "./data";
+
+MODULE.register("pf2e-automaton", "PF2e Automation");
 
 declare global {
     interface Window {
@@ -6,14 +9,29 @@ declare global {
     }
 
     interface PF2eAutomaton {
-        socket: SocketlibSocket;
+        socket: AutomatonSocket;
+        storage: AutomatonStorage;
     }
 }
 
 Object.assign(window, {
-    pf2eAutomaton: {}
+    pf2eAutomaton: {
+        socket: undefined,
+        storage: new AutomatonStorage()
+    }
 });
 
-MODULE.register("pf2e-automaton", "PF2e Automation");
+Hooks.once("init", function () {
+    import("./triggers/index.js");
+});
 
-import "./hooks";
+Hooks.once("socketlib.ready", function () {
+    window.pf2eAutomaton.socket = new AutomatonSocket();
+});
+
+Hooks.on("createChatMessage", async function (chatMessage: ChatMessagePF2e) {
+    if (!chatMessage.isAuthor)
+        return;
+
+    window.pf2eAutomaton.storage.process(new AutomatonMessage(chatMessage));
+});

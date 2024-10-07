@@ -1,10 +1,13 @@
-import { Utils } from "../../utils";
+import { AutomatonMessage } from "../../data";
 
-export async function criticalSpecialization(trigger: string, rollOptions: Set<string>, actor: ActorPF2e, target: ActorPF2e) {
-    if (rollOptions.has("item:group:brawling"))
-        Utils.Actor.rollSave(target, "fortitude", {
-            origin: actor,
-            dc: Utils.Actor.getClassDC(actor),
-            extraRollOptions: ["origin:critical-specialization", "origin:item:group:brawling"]
-        });
-}
+window.pf2eAutomaton.storage.addTrigger({
+    trigger: "damage-roll",
+    predicate: [
+        "critical-specialization",
+        "check:outcome:critical-success",
+        "item:group:brawling"
+    ],
+    process: async (message: AutomatonMessage) => {
+        console.log("Brawling Critical Specialization!");
+    }
+});

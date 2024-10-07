@@ -19,6 +19,7 @@ export async function criticalSpecialization(trigger: string, rollOptions: Set<s
             img: "systems/pf2e/icons/effects/critical-effect.webp",
             name: "Brawling Critical Specialization",
             system: {
+                con
                 duration: {
                     expiry: "turn-end",
                     unit: "rounds",

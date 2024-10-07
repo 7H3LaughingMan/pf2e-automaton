@@ -3,8 +3,6 @@ import { Utils } from "../utils";
 
 Hooks.once("socketlib.ready", function () {
     window.pf2eAutomaton.socket = socketlib.registerModule(MODULE.id);
-    window.pf2eAutomaton.socket.register("Actor.increaseCondition", Actor.increaseActorCondition);
-    window.pf2eAutomaton.socket.register("Actor.decreaseCondition", Actor.decreaseActorCondition);
     window.pf2eAutomaton.socket.register("Actor.rollSave", Actor.rollSave);
 });
 
@@ -33,14 +31,6 @@ namespace Actor {
             melee: args.melee,
             createMessage: args.createMessage
         }));
-    }
-
-    export async function increaseActorCondition(actorId: string, conditionSlug: string, options?: { max?: number; value?: number | null; } | undefined) {
-        await Utils.Actor.increaseCondition(await fromUuid(actorId) as ActorPF2e, conditionSlug, options);
-    }
-
-    export async function decreaseActorCondition(actorId: string, conditionSlug: string, options?: { forceRemove: boolean; }) {
-        await Utils.Actor.decreaseCondition(await fromUuid(actorId) as ActorPF2e, conditionSlug, options);
     }
 }
 
