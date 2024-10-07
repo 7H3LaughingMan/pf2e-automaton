@@ -1,6 +1,9 @@
 import { MODULE } from "foundry-pf2e";
 import { AutomatonMessage, AutomatonSocket, AutomatonStorage } from "./data";
 
+// @ts-ignore
+import * as TriggerData from "./triggers/**/*.ts";
+
 MODULE.register("pf2e-automaton", "PF2e Automation");
 
 declare global {
@@ -22,7 +25,9 @@ Object.assign(window, {
 });
 
 Hooks.once("init", function () {
-    import("./triggers/index.js");
+    for (const triggers of TriggerData.default) {
+        window.pf2eAutomaton.storage.data.push(...triggers.default);
+    }
 });
 
 Hooks.once("socketlib.ready", function () {
