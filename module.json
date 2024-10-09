@@ -16,7 +16,7 @@
         "maximum": "12"
     },
     "esmodules": [
-        "scripts/index.js"
+        "dist/pf2e-automaton.mjs"
     ],
     "socket": true,
     "relationships": {

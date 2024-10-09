@@ -1,32 +1,32 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "isolatedModules": true,
-        "esModuleInterop": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "noFallthroughCasesInSwitch": true,
-        "strictFunctionTypes": true,
-        "strictNullChecks": true,
-        "strictPropertyInitialization": true,
-        "strictBindCallApply": true,
+        "useDefineForClassFields": true,
+        "module": "ESNext",
         "lib": [
+            "ESNext",
             "DOM",
-            "DOM.Iterable",
-            "ESNext"
+            "DOM.Iterable"
         ],
         "types": [
+            "vite/client",
             "foundry-pf2e",
-            "@typed-foundry/socketlib",
+            "@typed-foundry/socketlib"
         ],
-        "rootDir": "src",
-        "outDir": "scripts"
+        "skipLibCheck": true,
+        /* Bundler mode */
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "isolatedModules": true,
+        "moduleDetection": "force",
+        "noEmit": true,
+        /* Linting */
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true
     },
     "include": [
-        "./src/**/*"
+        "src"
     ]
 }

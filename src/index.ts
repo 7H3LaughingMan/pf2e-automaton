@@ -1,8 +1,7 @@
 import { MODULE } from "foundry-pf2e";
-import { AutomatonMessage, AutomatonSocket, AutomatonStorage } from "./data";
-
-// @ts-ignore
-import * as TriggerData from "./triggers/**/*.ts";
+import { AutomatonSocket } from "./data/AutomatonSocket";
+import { AutomatonStorage } from "./data/AutomatonStorage";
+import { AutomatonMessage } from "./data/AutomatonMessage";
 
 MODULE.register("pf2e-automaton", "PF2e Automation");
 
@@ -24,12 +23,6 @@ Object.assign(window, {
     }
 });
 
-Hooks.once("init", function () {
-    for (const triggers of TriggerData.default) {
-        window.pf2eAutomaton.storage.data.push(...triggers.default);
-    }
-});
-
 Hooks.once("socketlib.ready", function () {
     window.pf2eAutomaton.socket = new AutomatonSocket();
 });
@@ -38,5 +31,5 @@ Hooks.on("createChatMessage", async function (chatMessage: ChatMessagePF2e) {
     if (!chatMessage.isAuthor)
         return;
 
-    window.pf2eAutomaton.storage.process(new AutomatonMessage(chatMessage));
+    window.pf2eAutomaton.storage.process(await AutomatonMessage.initialize(chatMessage));
 });

@@ -10,47 +10,56 @@ const CHECK_TYPE = [
 ];
 
 export class AutomatonMessage {
-    trigger: string;
-    rollOptions: string[];
+    trigger?: string;
+    rollOptions?: string[];
+    item?: ItemPF2e<ActorPF2e>;
     speaker?: AutomatonActor;
     origin?: AutomatonActor;
     target?: AutomatonActor;
 
-    constructor(message: ChatMessagePF2e) {
-        this.trigger = message.flags.pf2e.context?.type ?? "";
+    static async initialize(chatMessage: ChatMessagePF2e): Promise<AutomatonMessage> {
+        let message = new AutomatonMessage();
+        message.trigger = chatMessage.flags.pf2e.context?.type ?? "";
+        message.item = chatMessage.item ?? undefined;
 
-        const rollOptions = new Set(message.flags.pf2e.context?.options ?? []);
-        const outcome = message.flags.pf2e.context?.outcome;
+        const rollOptions = new Set(chatMessage.flags.pf2e.context?.options ?? []);
+        const outcome = chatMessage.flags.pf2e.context?.outcome;
         if (outcome) rollOptions.add(`check:outcome:${game.pf2e.system.sluggify(outcome)}`);
 
-        if (message.actor) {
-            this.speaker = {
-                actor: message.actor,
-                token: !message.token ? undefined : message.token
+        if (chatMessage.actor && chatMessage.token) {
+            message.speaker = {
+                actor: chatMessage.actor,
+                token: chatMessage.token
             };
-
-            message.actor.getRollOptions()
         }
 
-        if (message.flags.pf2e.context?.type && CHECK_TYPE.includes(message.flags.pf2e.context.type)) {
-            let checkContext = message.flags.pf2e.context as CheckContextChatFlag;
+        if (chatMessage.target?.actor && chatMessage.target.token) {
+            message.target = {
+                actor: chatMessage.target.actor,
+                token: chatMessage.target.token
+            };
+        }
+
+        if (chatMessage.flags.pf2e.context?.type && CHECK_TYPE.includes(chatMessage.flags.pf2e.context.type)) {
+            let checkContext = chatMessage.flags.pf2e.context as CheckContextChatFlag;
 
             if (checkContext.origin) {
-                this.origin = {
-                    actor: fromUuidSync(checkContext.origin.actor) as ActorPF2e,
-                    token: !checkContext.origin.token ? undefined : (fromUuidSync(checkContext.origin.token) as unknown) as TokenDocumentPF2e
-                }
-            }
-
-            if (checkContext.target) {
-                this.target = {
-                    actor: fromUuidSync(checkContext.target.actor) as ActorPF2e,
-                    token: !checkContext.target.token ? undefined : (fromUuidSync(checkContext.target.token) as unknown) as TokenDocumentPF2e
-                }
+                message.origin = {
+                    actor: await fromUuid(checkContext.origin.actor) as ActorPF2e,
+                    token: !checkContext.origin.token ? undefined : await fromUuid(checkContext.origin.token) as TokenDocumentPF2e
+                };
             }
         }
 
-        this.rollOptions = Array.from(rollOptions).sort();
+        if (chatMessage.flags.pf2e.strike) {
+            let strike = chatMessage.flags.pf2e.strike;
+
+            let actor = await fromUuid(strike.actor) as ActorPF2e;
+            message.item = actor.system.actions?.[strike.index].item;
+        }
+
+        message.rollOptions = Array.from(rollOptions).sort();
+        return message;
     }
 
     predicate(predicate?: PredicateStatement[]): boolean {

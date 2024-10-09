@@ -1,15 +1,25 @@
 import { AutomatonMessage } from "./AutomatonMessage";
-import { AutomatonTrigger } from "./AutomatonTrigger";
+import { AutomatonAction } from "./AutomatonAction";
+
+const actions = import.meta.glob('../actions/**/*.ts', { import: "default" });
 
 export class AutomatonStorage {
-    data: AutomatonTrigger[] = [];
+    #data: AutomatonAction[] = [];
+
+    constructor() {
+        for (const path in actions) {
+            actions[path]().then((mod) => {
+                // @ts-expect-error
+                this.#data.push(...mod);
+            });
+        }
+    }
 
     async process(message: AutomatonMessage) {
-        let triggers = this.data.filter((x) => x.trigger == message.trigger);
-        let foundTriggers = triggers.filter((x) => message.predicate(x.predicate));
+        let actions = this.#data.filter((x) => x.trigger == message.trigger && message.predicate(x.predicate));
 
-        for (const trigger of foundTriggers) {
-            await trigger.process(message);
-        }
+        actions.forEach(action => {
+            action.process(message)
+        });
     }
 }

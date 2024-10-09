@@ -1,16 +1,17 @@
 {
 	"name": "pf2e-automaton",
 	"scripts": {
-		"build": "node ./build.mjs",
-		"dev": "node ./dev.mjs"
+		"build": "tsc && vite build",
+		"dev": "vite build --watch",
+		"changelog": "changelog --format markdownlint --create --release"
 	},
 	"author": "7H3LaughingMan",
 	"license": "MIT",
 	"devDependencies": {
-		"esbuild": "^0.24.0",
-		"esbuild-plugin-import-glob": "^0.1.1",
+		"@types/node": "^22.7.5",
 		"keep-a-changelog": "^2.5.3",
-		"typescript": "^5.6.2"
+		"typescript": "5.6.3",
+		"vite": "^5.4.8"
 	},
 	"dependencies": {
 		"@typed-foundry/socketlib": "^1.0.12",

@@ -4,7 +4,7 @@ export namespace Utils {
             return actor.createEmbeddedDocuments("Item", [effect]);
         }
 
-        export function getClassDC(actor: ActorPF2e): CheckDC | number | undefined  {
+        export function getClassDC(actor: ActorPF2e): CheckDC | number | undefined {
             if (actor.type == "character") {
                 let character = actor as CharacterPF2e;
 
@@ -20,35 +20,19 @@ export namespace Utils {
             }
         }
 
-        /*export async function rollSave(actor: ActorPF2e, save: SaveType, args?: StatisticRollParameters) {
-            if (!actor.canUserModify(game.user, "update")) {
-                window.pf2eAutomaton.socket.executeAsGM("Actor.rollSave", actor.id, save, (!args ? undefined : {
-                    identifier: args.identifier,
-                    action: args.action,
-                    token: (!args.token ? undefined : args.token.id),
-                    attackNumber: args.attackNumber,
-                    target: (!args.target ? undefined : args.target.id),
-                    origin: (!args.origin ? undefined : args.origin.id),
-                    dc: args.dc,
-                    label: args.label,
-                    slug: args.slug,
-                    title: args.title,
-                    extraRollNotes: args.extraRollNotes,
-                    modifiers: args.modifiers,
-                    item: (!args.item ? undefined : args.item.id),
-                    rollMode: args.rollMode,
-                    skipDialog: args.skipDialog,
-                    rollTwice: args.rollTwice,
-                    traits: args.traits,
-                    damaging: args.damaging,
-                    melee: args.melee,
-                    createMessage: args.createMessage
-                }));
-                return;
+        export async function getItem(itemUuid: ItemUUID): Promise<ItemPF2e<ActorPF2e> | undefined> {
+            let item = await fromUuid(itemUuid) as ItemPF2e<ActorPF2e>;
+            if(!item) {
+                let parts = itemUuid.split(".");
+                let actor = await fromUuid(parts.slice(0, -2).join(".")) as ActorPF2e;
+                if(actor) {
+                    item = actor.system.actions?.find((x) => x.item.id == parts.at(-1))?.item as ItemPF2e<ActorPF2e>;
+                }
             }
 
-            await actor.saves?.[save]?.roll(args);
-        }*/
+            if(item)
+                return item;
+        }
     }
 
     export namespace Effect {
