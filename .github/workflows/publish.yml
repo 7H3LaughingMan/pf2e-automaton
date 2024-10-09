@@ -46,6 +46,8 @@ jobs:
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
                 allowUpdates: true
+                draft: ${{ github.event.release.draft }}
+                prerelease: ${{ github.event.release.prerelease }}
                 name: ${{ steps.get_version.outputs.version-without-v }}
                 body: ${{ steps.changelog.outputs.release-notes }}
                 artifacts: './module.json, ./module.zip'
