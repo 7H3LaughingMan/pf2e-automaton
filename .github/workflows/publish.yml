@@ -7,7 +7,7 @@ on:
 jobs:
     build:
         if: ${{ github.event.release.prerelease }}
-        runs-on: unbuntu-latest
+        runs-on: ubuntu-latest
         permissions:
             contents: write
 
