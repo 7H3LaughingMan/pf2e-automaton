@@ -12,6 +12,7 @@ const CHECK_TYPE = [
 export class AutomatonMessage {
     trigger?: string;
     rollOptions?: string[];
+    checkRoll?: CheckRoll;
     item?: ItemPF2e<ActorPF2e>;
     speaker?: AutomatonActor;
     origin?: AutomatonActor;
@@ -58,6 +59,10 @@ export class AutomatonMessage {
             message.item = actor.system.actions?.[strike.index].item;
         }
 
+        if(chatMessage.isCheckRoll) {
+            message.checkRoll = chatMessage.rolls.at(0) as CheckRoll;
+        }
+        
         message.rollOptions = Array.from(rollOptions).sort();
         return message;
     }

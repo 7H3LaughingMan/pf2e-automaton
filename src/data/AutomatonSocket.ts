@@ -6,12 +6,27 @@ export class AutomatonSocket {
 
     constructor() {
         this.#socket = socketlib.registerModule(MODULE.id);
+        this.#socket.register("createEmbeddedItem", this.#createEmbeddedItem);
         this.#socket.register("decreaseCondition", this.#decreaseCondition);
         this.#socket.register("increaseCondition", this.#increaseCondition);
+        this.#socket.register("toggleCondition", this.#toggleCondition);
         this.#socket.register("rollSave", this.#rollSave);
     }
 
-    async decreaseCondition(actor: ActorPF2e, conditionSlug: string, options?: { forceRemove: boolean; }) {
+    async createEmbeddedItem(actor: ActorPF2e, data: PreCreate<ItemSourcePF2e>) {
+        if (!actor.canUserModify(game.user, "update")) {
+            this.#socket.executeAsGM("createEmbeddedItem", actor.uuid, data);
+            return;
+        }
+
+        await actor.createEmbeddedDocuments("Item", [data]);
+    }
+
+    async #createEmbeddedItem(actorUuid: ActorUUID, data: PreCreate<ItemSourcePF2e>) {
+        await window.pf2eAutomaton.socket.createEmbeddedItem(await fromUuid(actorUuid) as ActorPF2e, data);
+    }
+
+    async decreaseCondition(actor: ActorPF2e, conditionSlug: ConditionSlug, options?: { forceRemove: boolean; }) {
         if (!actor.canUserModify(game.user, "update")) {
             this.#socket.executeAsGM("decreaseCondition", actor.uuid, conditionSlug, options);
             return;
@@ -20,11 +35,11 @@ export class AutomatonSocket {
         await actor.decreaseCondition(conditionSlug, options);
     }
 
-    async #decreaseCondition(actorUuid: ActorUUID, conditionSlug: string, options?: { forceRemove: boolean; }) {
+    async #decreaseCondition(actorUuid: ActorUUID, conditionSlug: ConditionSlug, options?: { forceRemove: boolean; }) {
         await window.pf2eAutomaton.socket.decreaseCondition(await fromUuid(actorUuid) as ActorPF2e, conditionSlug, options);
     }
 
-    async increaseCondition(actor: ActorPF2e, conditionSlug: string, options?: { max?: number; value?: number | null; }) {
+    async increaseCondition(actor: ActorPF2e, conditionSlug: ConditionSlug, options?: { max?: number; value?: number | null; }) {
         if (!actor.canUserModify(game.user, "update")) {
             this.#socket.executeAsGM("increaseCondition", actor.uuid, conditionSlug, options);
             return;
@@ -33,8 +48,21 @@ export class AutomatonSocket {
         await actor.increaseCondition(conditionSlug, options);
     }
 
-    async #increaseCondition(actorUuid: ActorUUID, conditionSlug: string, options?: { max?: number; value?: number | null; }) {
+    async #increaseCondition(actorUuid: ActorUUID, conditionSlug: ConditionSlug, options?: { max?: number; value?: number | null; }) {
         await window.pf2eAutomaton.socket.increaseCondition(await fromUuid(actorUuid) as ActorPF2e, conditionSlug, options);
+    }
+
+    async toggleCondition(actor: ActorPF2e, conditionSlug: ConditionSlug, options?: { active?: boolean}) {
+        if (!actor.canUserModify(game.user, "update")) {
+            this.#socket.executeAsGM("toggleCondition", actor.uuid, conditionSlug, options);
+            return;
+        }
+
+        await actor.toggleCondition(conditionSlug, options);
+    }
+
+    async #toggleCondition(actorUuid: ActorUUID, conditionSlug: ConditionSlug, options?: { active?: boolean}) {
+        await window.pf2eAutomaton.socket.toggleCondition(await fromUuid(actorUuid) as ActorPF2e, conditionSlug, options);
     }
 
     async rollSave(actor: ActorPF2e, save: SaveType, args?: StatisticRollParameters) {
@@ -69,8 +97,6 @@ export class AutomatonSocket {
     }
 
     async #rollSave(actorUuid: ActorUUID, save: SaveType, args?: Types.StatisticRollParameters) {
-        let item = !args?.item ? undefined : await Utils.Actor.getItem(args.item);
-
         await window.pf2eAutomaton.socket.rollSave(await fromUuid(actorUuid) as ActorPF2e, save, (!args ? undefined : {
             identifier: args.identifier,
             action: args.action,
@@ -85,7 +111,7 @@ export class AutomatonSocket {
             extraRollNotes: args.extraRollNotes,
             extraRollOptions: args.extraRollOptions,
             modifiers: args.modifiers,
-            item: (!item ? undefined : item),
+            item: (!args.item ? undefined : await Utils.Actor.getItem(args.item)),
             rollMode: args.rollMode,
             skipDialog: args.skipDialog,
             rollTwice: args.rollTwice,

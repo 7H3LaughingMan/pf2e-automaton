@@ -19,11 +19,11 @@ export default [
             if (!message.speaker?.actor || !message.origin?.actor)
                 return;
 
-            await Utils.Actor.addEffect(message.speaker?.actor, {
+            await window.pf2eAutomaton.socket.createEmbeddedItem(message.speaker?.actor, {
                 _id: null,
                 type: "effect",
                 img: "systems/pf2e/icons/effects/critical-effect.webp",
-                name: "Critical Specialization (Brawling)",
+                name: `${game.i18n.localize("PF2E.Actor.Creature.CriticalSpecialization")} (${game.i18n.localize("PF2E.WeaponGroupBrawling")})`,
                 system: {
                     context: {
                         origin: {
@@ -37,9 +37,12 @@ export default [
                             token: message.speaker.token?.uuid ?? null
                         },
                         roll: {
-                            total: 0,
-                            degreeOfSuccess: 0
+                            total: message.checkRoll?.total,
+                            degreeOfSuccess: message.checkRoll?.degreeOfSuccess ?? null
                         }
+                    },
+                    description: {
+                        value: game.i18n.localize("PF2E.Item.Weapon.CriticalSpecialization.brawling")
                     },
                     duration: {
                         expiry: "turn-end",
@@ -52,10 +55,86 @@ export default [
                         onDeleteActions: {
                             grantee: "restrict"
                         },
-                        uuid: "Compendium.pf2e.conditionitems.Item.xYTAsEpcJE1Ccni3"
+                        uuid: Utils.CONDITIONS["slowed"]
                     }]
                 }
             });
+        }
+    },
+    {
+        trigger: "saving-throw",
+        predicate: [
+            {
+                "or": [
+                    "check:outcome:failure",
+                    "check:outcome:critical-failure"
+                ]
+            },
+            "critical-specialization",
+            "item:group:firearm"
+        ],
+        process: async (message: AutomatonMessage) => {
+            if (!message.speaker?.actor || !message.origin?.actor)
+                return;
+
+            await window.pf2eAutomaton.socket.toggleCondition(message.speaker?.actor, "stunned", { active: true });
+        }
+    },
+    {
+        trigger: "saving-throw",
+        predicate: [
+            {
+                "or": [
+                    "check:outcome:failure",
+                    "check:outcome:critical-failure"
+                ]
+            },
+            "critical-specialization",
+            "item:group:flail"
+        ],
+        process: async (message: AutomatonMessage) => {
+            if (!message.speaker?.actor || !message.origin?.actor)
+                return;
+
+            await window.pf2eAutomaton.socket.toggleCondition(message.speaker?.actor, "prone", { active: true });
+        }
+    },
+    {
+        trigger: "saving-throw",
+        predicate: [
+            {
+                "or": [
+                    "check:outcome:failure",
+                    "check:outcome:critical-failure"
+                ]
+            },
+            "critical-specialization",
+            "item:group:hammer"
+        ],
+        process: async (message: AutomatonMessage) => {
+            if (!message.speaker?.actor || !message.origin?.actor)
+                return;
+
+            await window.pf2eAutomaton.socket.toggleCondition(message.speaker?.actor, "prone", { active: true });
+        }
+    },
+    {
+        trigger: "saving-throw",
+        predicate: [
+            {
+                "or": [
+                    "check:outcome:failure",
+                    "check:outcome:critical-failure"
+                ]
+            },
+            "critical-specialization",
+            "item:group:sling"
+        ],
+        process: async (message: AutomatonMessage) => {
+            if (!message.speaker?.actor || !message.origin?.actor)
+                return;
+
+            await window.pf2eAutomaton.socket.toggleCondition(message.speaker?.actor, "stunned", { active: true });
         }
     }
 ]
