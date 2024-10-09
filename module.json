@@ -1,7 +1,9 @@
 {
     "id": "pf2e-automaton",
     "title": "PF2e Automaton",
+    "version": "6.0.0",
     "description": "",
+    "socket": true,
     "authors": [
         {
             "name": "7H3LaughingMan",
@@ -9,17 +11,21 @@
             "url": "https://github.com/7H3LaughingMan"
         }
     ],
-    "version": "6.0.0",
+    "esmodules": [
+        "dist/pf2e-automaton.mjs"
+    ],
     "compatibility": {
         "minimum": "12.331",
         "verified": "12.331",
         "maximum": "12"
     },
-    "esmodules": [
-        "dist/pf2e-automaton.mjs"
-    ],
-    "socket": true,
     "relationships": {
+        "requires": [
+            {
+                "id": "socketlib",
+                "type": "module"
+            }
+        ],
         "systems": [
             {
                 "id": "pf2e",
@@ -30,5 +36,12 @@
                 }
             }
         ]
-    }
+    },
+    "url": "https://github.com/7H3LaughingMan/pf2e-automaton",
+    "bugs": "https://github.com/7H3LaughingMan/pf2e-automaton/issues",
+    "readme": "https://github.com/7H3LaughingMan/pf2e-automaton/blob/main/README.md",
+    "license": "https://github.com/7H3LaughingMan/pf2e-automatone/blob/main/LICENSE",
+    "changelog": "https://github.com/7H3LaughingMan/pf2e-automaton/blob/main/CHANGELOG.md",
+    "manifest": "https://github.com/7H3LaughingMan/pf2e-automaton/raw/main/module.json",
+    "download": "https://github.com/7H3LaughingMan/pf2e-automaton/archive/refs/heads/main.zip"
 }
