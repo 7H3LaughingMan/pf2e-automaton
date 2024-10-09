@@ -34,7 +34,7 @@ jobs:
                 npm ci
                 npm run build
 
-            - run: zip -r9 ./module.zip /dist module.json README.md LICENSE CHANGELOG.md
+            - run: zip -r9 ./module.zip module.json README.md LICENSE CHANGELOG.md dist/
 
             - uses: release-flow/keep-a-changelog-action@v3
               id: changelog
